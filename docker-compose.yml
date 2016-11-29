@@ -1,0 +1,71 @@
+version: "2"
+services:
+
+  hub:
+    container_name: hub
+    build: hub
+    ports:
+      - 4444:4444
+
+  firefox:
+    container_name: firefox
+    image: selenium/node-firefox:latest
+    environment:
+      HUB_PORT_4444_TCP_ADDR: hub
+      HUB_PORT_4444_TCP_PORT: 4444
+    ports:
+      - 5900
+    links:
+      - hub
+    depends_on:
+      - hub
+
+  firefox_vnc:
+    container_name: firefox_vnc
+    image: selenium/node-firefox-debug:latest
+    environment:
+      HUB_PORT_4444_TCP_ADDR: hub
+      HUB_PORT_4444_TCP_PORT: 4444
+    ports:
+      - 5900
+    links:
+      - hub
+    depends_on:
+      - hub
+
+  chrome:
+    container_name: chrome
+    image: selenium/node-chrome:latest
+    environment:
+      HUB_PORT_4444_TCP_ADDR: hub
+      HUB_PORT_4444_TCP_PORT: 4444
+    ports:
+      - 5900
+    links:
+      - hub
+    depends_on:
+      - hub
+
+  chrome_vnc:
+    container_name: chrome_vnc
+    image: selenium/node-chrome-debug:latest
+    environment:
+      HUB_PORT_4444_TCP_ADDR: hub
+      HUB_PORT_4444_TCP_PORT: 4444
+    ports:
+      - 5900
+    links:
+      - hub
+    depends_on:
+      - hub
+
+  console:
+    container_name: console
+    image: youske/alpine-conda:miniconda
+    links:
+      - hub
+    depends_on:
+      - hub
+    volumes:
+      - "./src:/source"
+    tty: true
